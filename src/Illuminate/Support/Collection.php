@@ -65,7 +65,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     public function avg($callback = null)
     {
-        if ($count = $this->count()) {
+        if ($count = $this->where($callback, '!==', null)->count()) {
             return $this->sum($callback) / $count;
         }
     }
@@ -652,7 +652,11 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         return $this->reduce(function ($result, $item) use ($callback) {
             $value = $callback($item);
 
-            return is_null($result) || $value > $result ? $value : $result;
+            if (is_null($result)) return $value;
+
+            if (is_null($value)) return $result;
+
+            return $value > $result ? $value : $result;
         });
     }
 
@@ -702,7 +706,11 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         return $this->reduce(function ($result, $item) use ($callback) {
             $value = $callback($item);
 
-            return is_null($result) || $value < $result ? $value : $result;
+            if (is_null($result)) return $value;
+
+            if (is_null($value)) return $result;
+
+            return $value < $result ? $value : $result;
         });
     }
 
